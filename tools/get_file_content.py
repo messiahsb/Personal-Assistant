@@ -23,16 +23,21 @@ def get_file_content(working_directory: str, file_path: str) -> str:
     except Exception as e:
             return f'Error: {e}'
 
-# schema_get_file_content = types.FunctionDeclaration(name="get_file_content",
-#         description="Returns the contents of a specified file relative to the working directory",
-#         parameters=types.Schema(
-#             type=types.Type.OBJECT,
-#             required=["file_path"],
-#             properties={
-#                 "file_path":types.Schema(
-#                     type=types.Type.STRING,
-#                     description="File path to the file that we want to obtain the contents of, relative to the working directory",
-#                 ),
-#             }
-#         )
-#     )
+
+schema_get_file_content = {
+    "type": "function",
+    "function": {
+        "name": "get_file_content",
+        "description": f"Retrieves the content (at most {MAX_CHARS} characters) of a specified file within the working directory",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string",
+                    "description": "Path to the file to read, relative to the working directory",
+                },
+            },
+            "required": ["file_path"],
+        },
+    },
+}
