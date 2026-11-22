@@ -31,7 +31,7 @@ if args.verbose:
     print(f'User prompt: {args.user_prompt}\n')
 
 # Function for agent chat
-def get_agent_chat(client: OpenAI, messages: list, verbose: bool) -> None:
+def get_agent_chat(client: OpenAI, messages: list, verbose: bool) -> str:
     response = client.chat.completions.create(
         model="gemma-4",
         messages=messages,
@@ -45,12 +45,27 @@ def get_agent_chat(client: OpenAI, messages: list, verbose: bool) -> None:
     if not response.usage:
         raise RuntimeError("API response appears to be malformed")
 
-    answer = response.choices[0].message.content
+    answer = response.choices[0].message
     if verbose:
         print(f'Prompt Tokens: {response.usage.prompt_tokens}')
         print(f'Response Tokens: {response.usage.completion_tokens}')
-    print("Response:")
-    print(answer)
+    return answer
 
 
 get_agent_chat(client, messages, args.verbose)
+message = get_agent_chat(client, messages, args.verbose)
+messages.append(message)
+
+print("Response:")
+print(message.content)
+
+while True:
+    user_input = input("\nYou: ")
+
+    if user_input.lower() == "exit":
+        break
+    messages.append({"role": "user", "content": user_input})
+    message = get_agent_chat(client, messages, True)
+    messages.append(message)
+    print("Response:")
+    print(message.content)
